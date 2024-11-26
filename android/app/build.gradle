@@ -1,0 +1,71 @@
+// Define flutterVersionCode and flutterVersionName
+def flutterVersionCode = project.hasProperty('flutter.versionCode') ? project.getProperty('flutter.versionCode').toInteger() : 1
+def flutterVersionName = project.hasProperty('flutter.versionName') ? project.getProperty('flutter.versionName') : "1.0.0"
+
+// Android block starts here
+android {
+    namespace = "com.bigbreakingwire.app"
+    compileSdk = 35
+    ndkVersion = flutter.ndkVersion
+
+    defaultConfig {
+        applicationId "com.bigbreakingwire.app"
+        minSdk = 21
+        targetSdk = 34
+        versionCode = flutterVersionCode  // Use the flutterVersionCode variable
+        versionName = flutterVersionName  // Use the flutterVersionName variable
+        multiDexEnabled true
+    }
+
+    compileOptions {
+        coreLibraryDesugaringEnabled true
+        sourceCompatibility = JavaVersion.VERSION_1_8
+        targetCompatibility = JavaVersion.VERSION_1_8
+    }
+
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
+
+    signingConfigs {
+        release {
+            keyAlias keystoreProperties['keyAlias']
+            keyPassword keystoreProperties['keyPassword']
+            storeFile file(keystoreProperties['storeFile'])
+            storePassword keystoreProperties['storePassword']
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled true
+            shrinkResources true
+            ndk {
+                debugSymbolLevel = 'FULL'
+            }
+            signingConfig signingConfigs.release
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+        debug {
+            signingConfig signingConfigs.debug
+        }
+    }
+
+    packagingOptions {
+        jniLibs {
+            useLegacyPackaging = true
+        }
+    }
+}
+
+dependencies {
+    implementation 'androidx.window:window:1.0.0'
+    implementation 'androidx.window:window-java:1.0.0'
+    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.2.2'
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    implementation 'com.google.android.recaptcha:recaptcha:18.4.0'
+}
+
+flutter {
+    source = "../.."
+}
